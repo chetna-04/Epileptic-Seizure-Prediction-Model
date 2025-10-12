@@ -10,14 +10,6 @@ The core contribution of this work is the development and evaluation of a featur
 4. Feature Engineering: Extracts 322 handcrafted features (time, frequency, and non-linear) from EEG spectrograms, reduced using Principal Component Analysis (PCA).
 5. Imbalance Handling: Utilizes SMOTE (Synthetic Minority Oversampling Technique) exclusively on training folds to address the rarity of seizure events.
 
-**Project Structure**
-epileptic-seizure-setection-model/
-├──data/
-|  ├──features/
-|  ├──raw/
-|  ├──preprocessed/
-_To be added_
-
 **Dataset**
 This project uses the publicly available CHB-MIT Scalp EEG Database from PhysioNet.
 1. Source: PhysioNet - CHB-MIT Scalp EEG Database
