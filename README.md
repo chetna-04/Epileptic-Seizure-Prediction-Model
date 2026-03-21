@@ -29,7 +29,7 @@ pip install -r requirements.txt
   c. Evaluation: Stratified 10-fold cross-validation with SMOTE applied within the training folds.
 
 Citation
-If you use this code or methodology in your research, please cite the original paper: _To be added_
+If you use this code or methodology in your research, please cite the original paper: 10.1109/DELCON68055.2025.11400324
 
 License
 This project is licensed under the [Insert your preferred license, e.g., MIT License] - see ENSE.md file for details.
