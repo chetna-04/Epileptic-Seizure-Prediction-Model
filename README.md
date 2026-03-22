@@ -1,35 +1,84 @@
-**Improving Healthcare Outcomes with Explainable Machine Learning for Early Epileptic Seizure Detection Using EEG Signals
-Overview**
-This repository contains the complete code and configuration for the explainable machine learning (XML) framework for early epileptic seizure detection using Electroencephalogram (EEG) signals.
-The core contribution of this work is the development and evaluation of a feature-based Light Gradient Boosting Machine (LGBM) classifier, which provides early seizure warnings while maintaining high interpretability using SHapley Additive exPlanations (SHAP) under realistic, imbalanced testing conditions.
+# Explainable ML for Early Epileptic Seizure Detection using EEG
 
-**Key Features**
-1. Early Warning System: Provides seizure warnings between 4 and 15 minutes before onset.
-2. Explainable AI (XAI): Implements SHAP analysis to ensure clinical transparency by identifying key predictive features like gamma band power and sample entropy.
-3. Robust Performance: Achieved an average accuracy of 89.74% and an F1-score of 74.39% when evaluated on realistically imbalanced test sets.
-4. Feature Engineering: Extracts 322 handcrafted features (time, frequency, and non-linear) from EEG spectrograms, reduced using Principal Component Analysis (PCA).
-5. Imbalance Handling: Utilizes SMOTE (Synthetic Minority Oversampling Technique) exclusively on training folds to address the rarity of seizure events.
+An explainable machine learning pipeline for early epileptic seizure detection using EEG brain signals.  
+Research published and presented at **IEEE DELCON 2025**.  
+📄 DOI: [10.1109/DELCON68055.2025.11400324](https://doi.org/10.1109/DELCON68055.2025.11400324)
 
-**Dataset**
-This project uses the publicly available CHB-MIT Scalp EEG Database from PhysioNet.
-1. Source: PhysioNet - CHB-MIT Scalp EEG Database
-2. Patient Cohort: Long-term EEG recordings from 23 pediatric patients with intractable epilepsy.
-3. Subset Used: Data from the first 10 patients (chb01-chb10) were selected for analysis.
+---
 
-Note: You must download the dataset separately from PhysioNet and place it in the designated data/raw folder for the scripts to run correctly.
+## Overview
 
-**Technical Details**
-1. Dependencies
-The project requires the following libraries. You can install them using pip:
+Epilepsy affects over 50 million people globally. Early warning systems — ones that flag a likely seizure minutes before onset — can dramatically improve patient safety. This project builds a feature-based ML pipeline that provides seizure warnings **4–15 minutes before onset** while remaining interpretable enough for clinical use.
+
+The core challenge: seizures are rare (< 1% of EEG data), making this a highly imbalanced classification problem. The solution prioritizes both reliable detection and explainability via SHAP.
+
+---
+
+## Results
+
+| Metric | Score |
+|---|---|
+| Average Accuracy | 89.74% |
+| F1-Score (imbalanced test) | 74.39% |
+| Early Warning Window | 4–15 minutes before onset |
+| Evaluation Strategy | Stratified 10-fold cross-validation |
+
+---
+
+## Technical Approach
+
+**Dataset:** CHB-MIT Scalp EEG Database (PhysioNet) — long-term EEG recordings from 23 pediatric patients with intractable epilepsy. Subset used: patients chb01–chb10.
+
+**Pipeline:**
+1. **Preprocessing** — segment raw EEG into 4-second windows with 2-second overlap
+2. **Feature Engineering** — extract 322 handcrafted features across three domains:
+   - Time-domain (mean, variance, skewness, Hjorth parameters)
+   - Frequency-domain (band power: delta, theta, alpha, beta, gamma)
+   - Non-linear (sample entropy, Hurst exponent)
+3. **Dimensionality Reduction** — PCA reduces 322 features to 170
+4. **Imbalance Handling** — SMOTE applied exclusively within training folds (prevents data leakage)
+5. **Model** — LightGBM classifier
+6. **Explainability** — SHAP analysis identifies top predictive features
+
+---
+
+## Repo Structure
+
+```
+├── eeg_preprocessing/    # Signal preprocessing
+├── features.py           # Feature extraction (time, frequency, non-linear)
+├── training.py           # LightGBM training with stratified CV + SMOTE
+├── evaluation.py         # Metrics and cross-validation results
+├── shap_summary.py       # SHAP explainability analysis
+├── plots.py              # Visualizations
+└── config.py             # Global parameters
+```
+
+---
+
+## Setup
+
+```bash
 pip install -r requirements.txt
+```
 
-2. Model Architecture and Parameters
-  a. Classifier: Light Gradient Boosting Machine (LGBM).
-  b. Feature Set: 170 PCA-reduced features from an initial set of 322 handcrafted features.
-  c. Evaluation: Stratified 10-fold cross-validation with SMOTE applied within the training folds.
+**Dataset:** Download the CHB-MIT Scalp EEG Database from [PhysioNet](https://physionet.org/content/chbmit/1.0.0/) and place it in `data/raw/`.
 
-Citation
-If you use this code or methodology in your research, please cite the original paper: 10.1109/DELCON68055.2025.11400324
+---
 
-License
-This project is licensed under the [Insert your preferred license, e.g., MIT License] - see ENSE.md file for details.
+## Key Design Decisions
+
+- **LightGBM over deep learning** — dataset size makes deep models prone to overfitting; LightGBM generalizes well and is faster to interpret
+- **SMOTE inside folds only** — applying SMOTE before splitting leaks synthetic test samples into training, artificially inflating scores
+- **SHAP for explainability** — clinical deployment requires transparency; SHAP provides feature-level explanations doctors can act on
+- **F1 as primary metric** — accuracy is misleading under severe class imbalance
+
+---
+
+## Citation
+
+```
+Chetna et al., "Improving Healthcare Outcomes with Explainable Machine Learning 
+for Early Epileptic Seizure Detection Using EEG Signals," 
+IEEE DELCON 2025. DOI: 10.1109/DELCON68055.2025.11400324
+```
